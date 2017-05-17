@@ -1,0 +1,49 @@
+plugins {
+  id 'idea'
+  id 'groovy'
+  id 'net.researchgate.release' version '2.5.0'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+  compile(
+      'org.codehaus.groovy:groovy-all:2.4.11',
+      'com.amazonaws:aws-lambda-java-core:1.1.0',
+      'com.amazonaws:aws-lambda-java-log4j:1.0.0'
+  )
+
+  testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+task(buildJson) {
+  doLast {
+    def buildJson = new File("$buildDir/build.json")
+    def dist = "build/distributions/${project.name}-${project.version}.zip"
+    buildJson.newWriter().withWriter { w ->
+      w << groovy.json.JsonOutput.toJson([distribution: dist])
+    }
+  }
+}
+
+task buildZip(type: Zip) {
+  baseName = "${project.name}"
+  from compileGroovy
+  from processResources
+  into('lib') {
+    from configurations.runtime
+  }
+}
+
+release {
+  tagTemplate = '${name}-${version}'
+}
+
+buildZip.finalizedBy(buildJson)
+build.dependsOn buildZip
+afterReleaseBuild.finalizedBy(publish)
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '3.2.1'
+}

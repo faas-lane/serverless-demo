@@ -1,0 +1,26 @@
+service: serverless-demo
+
+custom:
+  accountId: 442594022227
+
+
+provider:
+  name: aws
+  runtime: java8
+  timeout: 300
+  memorySize: 1536
+  environment: ${file(serverless.env.yml):${self:provider.stage}}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "sns:Publish"
+      Resource: arn:aws:sns:${self:provider.region}:${self:custom.accountId}:monitoring-service-datadog
+
+
+package:
+  artifact: ${file(build/build.json):distribution}
+
+
+functions:
+  my-function:
+    handler: Handler::handleRequest
