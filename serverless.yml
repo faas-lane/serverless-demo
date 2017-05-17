@@ -1,8 +1,7 @@
 service: serverless-demo
 
 custom:
-  accountId: 442594022227
-
+  secrets: ${file(serverless.secrets.yml):${self:provider.stage}}
 
 provider:
   name: aws
@@ -14,13 +13,46 @@ provider:
     - Effect: "Allow"
       Action:
         - "sns:Publish"
-      Resource: arn:aws:sns:${self:provider.region}:${self:custom.accountId}:monitoring-service-datadog
-
+      Resource: arn:aws:sns:${self:provider.region}:${self:custom.secrets.AWS_ACCOUNT_ID}:monitoring-service-datadog
 
 package:
   artifact: ${file(build/build.json):distribution}
+  exclude:
+    - serverless.secrets.yml
 
 
 functions:
-  my-function:
-    handler: Handler::handleRequest
+  slack:
+    handler: com.bytekast.serverless.SlackServiceHandler::handler
+    tags:
+      VERSION: ${file(build/build.json):version}
+    events:
+      - http:
+          path: slack
+          method: post
+          cors: true
+  users:
+    handler: com.bytekast.serverless.UserServiceHandler::defaultHandler
+    tags:
+      VERSION: ${file(build/build.json):version}
+    events:
+      - http:
+          path: users
+          method: get
+          cors: true
+      - http:
+          path: users/{id}
+          method: get
+          cors: true
+      - http:
+          path: users
+          method: post
+          cors: true
+      - http:
+          path: users/{id}
+          method: put
+          cors: true
+      - http:
+          path: users/{id}
+          method: delete
+          cors: true

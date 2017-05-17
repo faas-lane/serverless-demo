@@ -1,7 +1,8 @@
+[![GitPitch](https://gitpitch.com/assets/badge.svg)](https://gitpitch.com/bytekast/serverless-demo/master?grs=github&t=white)
+
 # serverless-demo
 
-The purpose of this project is to provide a base template for quickly creating new [Serverless](https://serverless.com/) Microservices in AWS.
-
+AWS Lambda and Serverless Framework Demo
 
 ### Local Development Prerequisites
 
@@ -17,6 +18,27 @@ The purpose of this project is to provide a base template for quickly creating n
 
 `npm install serverless -g`
 <br/>
+
+
+> Set up AWS credentials
+
+Add your AWS credentials to the `~/.aws/credentials` file:
+
+```
+[default]
+aws_access_key_id = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+aws_secret_access_key = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+```
+
+> Set your default AWS region
+
+Add default region to `~/.aws/config` file:
+
+```
+[default]
+region = us-east-1
+
+```
 
 ---
 

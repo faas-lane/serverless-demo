@@ -1,0 +1,8 @@
+{
+  "resource": "/slack",
+  "path": "/slack",
+  "httpMethod": "POST",
+  "queryStringParameters": null,
+  "pathParameters": null,
+  "body": "token=tj3iIWWVDhppB6aRvFynZRXx&team_id=T5FDBDFCY&team_domain=serverless-dev&channel_id=D5GT86CG6&channel_name=directmessage&user_id=U5FDBDFG8&user_name=rowell&command=%2Fserverless&text=help&response_url=https%3A%2F%2Fhooks.slack.com%2Fcommands%2FT5FDBDFCY%2F187134187798%2FAU7yIAi46an9mPLG2gibpv78"
+}
