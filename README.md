@@ -42,6 +42,13 @@ region = us-east-1
 
 ---
 
+### Project Settings
+
+- Rename `serverless.secrets-sample.yml` to `serverless-secrets.yml`
+- Update secret values in `serverless-secrets.yml`
+
+---
+
 ### Build and Deploy
 
 > Build the project
