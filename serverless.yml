@@ -1,0 +1,73 @@
+service: serverless-demo
+
+custom:
+  secrets: ${file(serverless.secrets.yml):${self:provider.stage}}
+
+provider:
+  name: aws
+  runtime: java8
+  timeout: 300
+  memorySize: 1536
+  environment: ${file(serverless.env.yml):${self:provider.stage}}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "sqs:*"
+      Resource: arn:aws:sqs:${self:provider.region}:${self:custom.secrets.AWS_ACCOUNT_ID}:${self:provider.stage}-serverless-demo
+
+
+package:
+  artifact: ${file(build/build.json):distribution}
+  exclude:
+    - serverless.secrets.yml
+
+
+functions:
+  slack:
+    handler: com.bytekast.serverless.SlackServiceHandler::handler
+    tags:
+      VERSION: ${file(build/build.json):version}
+    events:
+      - http:
+          path: slack
+          method: post
+          cors: true
+      - schedule:
+          rate: rate(3 minutes)
+          input:
+            body: token=${self:custom.secrets.SLACK_COMMAND_VERIFICATION_TOKEN}&text=help
+  users:
+    handler: com.bytekast.serverless.UserServiceHandler::defaultHandler
+    tags:
+      VERSION: ${file(build/build.json):version}
+    events:
+      - http:
+          path: users
+          method: get
+          cors: true
+      - http:
+          path: users/{id}
+          method: get
+          cors: true
+      - http:
+          path: users
+          method: post
+          cors: true
+      - http:
+          path: users/{id}
+          method: put
+          cors: true
+      - http:
+          path: users/{id}
+          method: delete
+          cors: true
+
+
+resources:
+  Resources:
+    InboundQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: ${self:provider.stage}-serverless-demo
+        MessageRetentionPeriod: 1209600
+        VisibilityTimeout: 60
